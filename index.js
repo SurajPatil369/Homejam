@@ -1,7 +1,7 @@
 const express=require('express');
 const app=express();
 const userRoutes=require('./routes/user');
-
+const errorHandler=require('./middleware/errorHandler');
 const connectDB=require('./db/connection');
 PORT=8001
 
@@ -10,5 +10,7 @@ connectDB();
 
 //all routes
 app.use('/api/v1/user',userRoutes)
+
+app.use(errorHandler);
 
 app.listen(PORT,console.log('server started listening'))
