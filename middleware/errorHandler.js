@@ -1,4 +1,4 @@
-exports.errorHandler=(err,req,res,next)=>{
+const errorHandler=(err,req,res,next)=>{
     if (!err.statusCode){
         err.statusCode=500
     }
@@ -8,3 +8,4 @@ exports.errorHandler=(err,req,res,next)=>{
     })
     next();
 }
+module.exports=errorHandler;
