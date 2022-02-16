@@ -8,13 +8,15 @@ const { generateError } = require("../util/error");
 //@access Private
 
 exports.createClass = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id.toString();
+  const user = await User.findById(userId);
   const { title, description, fees, duration, notes } = req.body;
   if (req.user.role != "instructor") {
     throw generateError("only instructor can create the class", 403);
   }
 
-  const instructorName = req.user.name;
-  const instructorEmail = req.user.email;
+  const instructorName = user.name;
+  const instructorEmail = user.email;
   let course = new Class({
     title: title,
     description: description,
@@ -30,6 +32,7 @@ exports.createClass = asyncHandler(async (req, res, next) => {
   if (!course) {
     throw generateError("class can not be created at moment", 409);
   }
+
   res.status(200).json({
     success: true,
     message: "class created successfully",
@@ -39,17 +42,35 @@ exports.createClass = asyncHandler(async (req, res, next) => {
 
 //@desc   Get all classes
 //@route  GET /api/v1/class
-//@access Public
+//@route  GET /api/v1/user/:userId/me/classes
+//@access Public/Private
 
 exports.getClasses = asyncHandler(async (req, res, next) => {
-  const classes = await Class.find().populate("students", "name");
-  if (!classes) {
+  let courses;
+  let userId = req.params.userId;
+  console.log(userId)
+  if (userId) {
+    const user = await User.findById(userId).populate('classes');
+    console.log(user)
+    const userObj = { name: user.name, email: user.email };
+    if (user.role === "instructor") {
+      courses = await Class.find({instructor: userObj }).select('-instructor');
+      console.log("instructor:",courses);
+    } else if (user.role === "student") {
+      courses = user.classes;
+    }
+  } else {
+    courses = await Class.find().populate("students", "name");
+  }
+
+  if (!courses) {
     throw generateError("no class found", 404);
   }
+
   res.status(200).json({
     success: true,
     message: "classes fetched successfully",
-    data: classes,
+    data: courses,
   });
 });
 
@@ -71,7 +92,7 @@ exports.getClass = asyncHandler(async (req, res, next) => {
 
 //@desc    register to class
 //@route  POST /api/v1/class/:classId
-//@access Private
+//@access Public
 
 exports.registerToClass = asyncHandler(async (req, res, next) => {
   const course = await Class.findById(req.params.classId);
