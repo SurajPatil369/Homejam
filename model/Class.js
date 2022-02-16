@@ -2,12 +2,20 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const classSchema = new Schema({
-  name: {
+  title: {
     type: String,
     required: [true, "please enter class name"],
   },
-  duration: {
+  description: {
+    type: String,
+    required: true,
+  },
+  fees: {
     type: Number,
+    required: true,
+  },
+  duration: {
+    type: String,
     required: [true, "please enter the class duration"],
   },
   instructor: {
@@ -20,6 +28,8 @@ const classSchema = new Schema({
       required: true,
     },
   },
+  notes: { type: String, default: "notes.png" },
+  rating: { type: Number, default: 10 },
   students: [
     {
       type: mongoose.Schema.ObjectId,
@@ -31,3 +41,4 @@ const classSchema = new Schema({
     default: Date.now,
   },
 });
+module.exports=mongoose.model('Class',classSchema);
