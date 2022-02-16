@@ -57,3 +57,22 @@ exports.getClasses = asyncHandler(async(req, res, next) => {
       data: classes,
     });
 });
+
+//@desc   Get class
+//@route  GET /api/v1/class/:classId
+//@access Public
+
+exports.getClass = asyncHandler(async(req, res, next) => {
+  
+  const course=await Class.findById(req.params.classId);
+  if (!course){
+    throw generateError('no class found matching to this id',404)
+  }
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: "classes fetched successfully",
+      data: course,
+    });
+});
