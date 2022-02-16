@@ -81,3 +81,6 @@ exports.logout=asyncHandler(async(req,res,next)=>{
    })
    res.status(200).json({success:true,message:'logout successful',data:{}})
 })
+
+//desc get students
+//@route GET /api/v1/class/:classId
