@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const classSchema = new Schema({
   title: {
     type: String,
-    required: [true, "please enter class name"],
+    required: true,
   },
   description: {
     type: String,
@@ -16,15 +16,12 @@ const classSchema = new Schema({
   },
   duration: {
     type: String,
-    required: [true, "please enter the class duration"],
+    required:true,
   },
   instructor: {
     name: { type: String, required: true },
     email: {
       type: String,
-      match: [
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      ],
       required: true,
     },
   },

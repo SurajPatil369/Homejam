@@ -10,6 +10,7 @@ const {
 
 const studentRoute = require("../routes/student");
 
+//Re-route into other resource routers
 router.use("/:classId/students", studentRoute);
 router.use("/:classId/students/:studentId", studentRoute);
 

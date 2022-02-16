@@ -3,6 +3,7 @@ const {register,login,logout,getUser}=require('../controllers/user');
 const {isAuth}=require('../middleware/isAuth');
 const classRoute=require('./class');
 
+//Re-route into other resource routers
 router.use('/me/:userId/classes',isAuth,classRoute)
 
 router.post('/register',register);
