@@ -50,9 +50,9 @@ exports.login = asyncHandler(async (req, res, next) => {
     email: email,
     userId: user._id.toString(),
   };
-  const token = jwt.sign(data, "secret_key");
+  const token = jwt.sign(data, process.env.JWT_SECRET_KEY);
   const options = {
-    expires: new Date(Date.now() + 100 * 60 * 60 * 24 * 7),
+    expires: new Date(Date.now() + process.env.EXPIRES * 60 * 60 * 24 * 7),
     httpOnly: true,
   };
   res.cookie("token", token, options).status(200).json({

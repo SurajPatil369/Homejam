@@ -42,7 +42,7 @@ exports.createClass = asyncHandler(async (req, res, next) => {
 
 //@desc   Get all classes
 //@route  GET /api/v1/class
-//@route  GET /api/v1/user/:userId/me/classes
+//@route  GET /api/v1/user/me/:userId/classes'
 //@access Public/Private
 
 exports.getClasses = asyncHandler(async (req, res, next) => {
