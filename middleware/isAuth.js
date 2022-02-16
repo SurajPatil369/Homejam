@@ -4,12 +4,9 @@ const generateError = require("../util/error");
 const User = require("../model/User");
 
 exports.isAuth = asyncHandler(async (req, res, next) => {
-  console.log('called this funntion')
-  // console.log(req)
-  let token =  req.get("cookie")
-  token=token.split('=')
-  token=token[1]
-  console.log(token);
+  let token = req.get("cookie");
+  token = token.split("=");
+  token = token[1];
   if (!token) {
     throw generateError("not authorized", 401);
   }
@@ -23,7 +20,6 @@ exports.isAuth = asyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    throw error
-
+    throw error;
   }
 });

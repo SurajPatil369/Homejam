@@ -25,13 +25,11 @@ exports.register = asyncHandler(async (req, res, next) => {
   });
   await user.save();
 
-  res
-    .status(200)
-    .json({
-      success: true,
-      message: "user registered successfully",
-      data: user,
-    });
+  res.status(200).json({
+    success: true,
+    message: "user registered successfully",
+    data: user,
+  });
 });
 
 //@desc   login user
@@ -54,33 +52,43 @@ exports.login = asyncHandler(async (req, res, next) => {
   };
   const token = jwt.sign(data, "secret_key");
   const options = {
-    expires: new Date(
-      Date.now() + 100 * 60 * 60 * 24 * 7
-    ),
+    expires: new Date(Date.now() + 100 * 60 * 60 * 24 * 7),
     httpOnly: true,
   };
-  res
-    .cookie("token", token, options)
-    .status(200)
-    .json({
-      success: true,
-      message: "login successful",
-      token: token,
-      userId: user._id.toString(),
-    });
+  res.cookie("token", token, options).status(200).json({
+    success: true,
+    message: "login successful",
+    token: token,
+    userId: user._id.toString(),
+  });
 });
 
 //@desc   login user
 //@route  GET /api/v1/user/logout
 //@access Private
 
-exports.logout=asyncHandler(async(req,res,next)=>{
-   res.cookie('token',null,{
+exports.logout = asyncHandler(async (req, res, next) => {
+  res.cookie("token", null, {
     expiresIn: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
-   })
-   res.status(200).json({success:true,message:'logout successful',data:{}})
-})
+  });
+  res
+    .status(200)
+    .json({ success: true, message: "logout successful", data: {} });
+});
 
-//desc get students
-//@route GET /api/v1/class/:classId
+//desc get getUser
+//@route GET /api/v1/user/me
+
+exports.getUser = asyncHandler(async (req, res, next) => {
+  console.log(req.user)
+  const userId = req.user._id.toString();
+  const user = await User.findById(userId).populate(
+    "classes",
+    "title instructor"
+  );
+  if (!user) {
+    throw generateError("could not found user details", 404);
+  }
+  res.status(200).json({ success: true,message:'fetched user data',data:user });
+});
