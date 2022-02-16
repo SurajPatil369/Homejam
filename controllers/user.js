@@ -55,7 +55,7 @@ exports.login = asyncHandler(async (req, res, next) => {
   const token = jwt.sign(data, "secret_key");
   const options = {
     expires: new Date(
-      Date.now() + process.env.COOKIE_EXPIRE * 60 * 60 * 24 * 7
+      Date.now() + 100 * 60 * 60 * 24 * 7
     ),
     httpOnly: true,
   };
