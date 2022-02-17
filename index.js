@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./db/connection");
 const bodyParser = require("body-parser");
+const path=require('path')
 
 //load env vars
 dotenv.config({ path: "./config/config.env" });
