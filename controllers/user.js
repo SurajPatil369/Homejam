@@ -4,12 +4,18 @@ const { generateError } = require("../util/error");
 const { encryptPassword } = require("../util/encryptPassword");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
 
 //@desc   register user
 //@route  POST /api/v1/user/register
 //@access Public
 
 exports.register = asyncHandler(async (req, res, next) => {
+  const error = validationResult(req);
+  console.log(error);
+  if (!error.isEmpty()) {
+    throw generateError(error.array()[0].msg, 400);
+  }
   const { name, email, role, password } = req.body;
   const isUserAvailable = await User.findOne({ email: email });
   console.log(isUserAvailable);
@@ -81,7 +87,7 @@ exports.logout = asyncHandler(async (req, res, next) => {
 //@route GET /api/v1/user/me
 
 exports.getUser = asyncHandler(async (req, res, next) => {
-  console.log(req.user)
+  console.log(req.user);
   const userId = req.user._id.toString();
   const user = await User.findById(userId).populate(
     "classes",
@@ -90,5 +96,7 @@ exports.getUser = asyncHandler(async (req, res, next) => {
   if (!user) {
     throw generateError("could not found user details", 404);
   }
-  res.status(200).json({ success: true,message:'fetched user data',data:user });
+  res
+    .status(200)
+    .json({ success: true, message: "fetched user data", data: user });
 });

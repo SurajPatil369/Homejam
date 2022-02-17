@@ -2,12 +2,17 @@ const asyncHandler = require("../middleware/async");
 const User = require("../model/User");
 const Class = require("../model/Class");
 const { generateError } = require("../util/error");
-
+const { validationResult } = require('express-validator');
 //@desc   Create class
 //@route  POST /api/v1/class
 //@access Private
 
 exports.createClass = asyncHandler(async (req, res, next) => {
+  const error = validationResult(req)
+  console.log(error)
+  if (!error.isEmpty()){
+    throw generateError(error.array()[0].msg,400)
+  }
   const userId = req.user._id.toString();
   const user = await User.findById(userId);
   const { title, description, fees, duration, notes } = req.body;
