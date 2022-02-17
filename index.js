@@ -20,6 +20,7 @@ const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 //external middlewares
 app.use(bodyParser.json()); //    application/json parser
+app.use(express.static(path.join(__dirname, "public"))); //to serve the files statically
 
 //compressing response data
 app.use(compression());
@@ -43,8 +44,6 @@ app.use(limiter);
 
 //remove http parameter pollution
 app.use(hpp());
-
-
 
 //all routes
 app.use("/api/v1/user", userRoute);
