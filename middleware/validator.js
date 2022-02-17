@@ -41,7 +41,7 @@ const validateUserSchema = [
     .withMessage("please enter a valid email")
     .normalizeEmail(),
   body("role", "role required").trim().not().isEmpty(),
-  body("password", "password required")
+  body("password", "password is required")
     .trim()
     .not()
     .isEmpty()
