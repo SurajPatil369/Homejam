@@ -51,4 +51,4 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/class", classRoute);
 app.use(errorHandler);
 
-app.listen(process.env.PORT, console.log("server started listening"));
+app.listen(process.env.PORT || 5000, console.log("server started listening"));
