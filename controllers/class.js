@@ -2,16 +2,16 @@ const asyncHandler = require("../middleware/async");
 const User = require("../model/User");
 const Class = require("../model/Class");
 const { generateError } = require("../util/error");
-const { validationResult } = require('express-validator');
+const { validationResult } = require("express-validator");
 //@desc   Create class
 //@route  POST /api/v1/class
 //@access Private
 
 exports.createClass = asyncHandler(async (req, res, next) => {
-  const error = validationResult(req)
-  console.log(error)
-  if (!error.isEmpty()){
-    throw generateError(error.array()[0].msg,400)
+  const error = validationResult(req);
+  console.log(error);
+  if (!error.isEmpty()) {
+    throw generateError(error.array()[0].msg, 400);
   }
   const userId = req.user._id.toString();
   const user = await User.findById(userId);
@@ -53,14 +53,14 @@ exports.createClass = asyncHandler(async (req, res, next) => {
 exports.getClasses = asyncHandler(async (req, res, next) => {
   let courses;
   let userId = req.params.userId;
-  console.log(userId)
+  console.log(userId);
   if (userId) {
-    const user = await User.findById(userId).populate('classes');
-    console.log(user)
+    const user = await User.findById(userId).populate("classes");
+    console.log(user);
     const userObj = { name: user.name, email: user.email };
     if (user.role === "instructor") {
-      courses = await Class.find({instructor: userObj }).select('-instructor');
-      console.log("instructor:",courses);
+      courses = await Class.find({ instructor: userObj }).select("-instructor");
+      console.log("instructor:", courses);
     } else if (user.role === "student") {
       courses = user.classes;
     }
@@ -161,4 +161,37 @@ exports.unregisterToClass = asyncHandler(async (req, res, next) => {
     message: "you have unregistered to this course",
     data: [course, user],
   });
+});
+
+//@desc   Update course notes
+//@route  PUT   /api/v1/class/:classId/notes
+//@access Private
+exports.addNotes = asyncHandler(async (req, res, next) => {
+  if (!req.file) {
+    throw createError("please upload a notes ", 400);
+  }
+
+  const notesUrl = req.file.path.replace("\\", "/");
+
+  const course = await Class.findByIdAndUpdate(
+    req.params.classId,
+    {
+      notes: notesUrl,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+  //other than owner cant update this course
+  if (
+    course.instructor.email !== req.user.email ||
+    req.user.role !== 'instructor'
+  ) {
+    throw createError(`cant update the class created by others`, 404);
+  }
+  if (!course) {
+    throw createError("no Course found to update with this id", 404);
+  }
+  res.status(200).json({ message: "updated the Course", result: course });
 });

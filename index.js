@@ -4,7 +4,9 @@ const dotenv = require("dotenv");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./db/connection");
 const bodyParser = require("body-parser");
-const path=require('path')
+const path = require("path");
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid");
 
 //load env vars
 dotenv.config({ path: "./config/config.env" });
@@ -19,8 +21,21 @@ const xss = require("xss-clean");
 const hpp = require("hpp");
 const compression = require("compression");
 const rateLimit = require("express-rate-limit");
+
+const fileStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "notes");
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${uuidv4()}-${file.originalname}`);
+  },
+});
+
+app.use(multer({ storage: fileStorage }).single("notes"));
+
 //external middlewares
 app.use(bodyParser.json()); //    application/json parser
+app.use(express.static(path.join(__dirname, "notes")));
 app.use(express.static(path.join(__dirname, "public"))); //to serve the files statically
 
 //compressing response data
